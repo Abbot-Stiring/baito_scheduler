@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+        <meta charset="UTF-8">
+        <title> Daily Scheduler</title>
+    </head>
+    <body>
+        <h1> 毎日のスケジュール</h1>
+        <h2>活動を追加</h2>
+        <form action="/add" method="POST">
+            <input type="text" name="name" placeholder="活動名" required>
+            <select name="day" required>
+                <option>月曜日</option>
+                <option>火曜日</option>
+                <option>水曜日</option>
+                <option>木曜日</option>
+                <option>金曜日</option>
+                <option>土曜日</option>
+                <option>日曜日</option>
+            </select>
+            <input type="time" name="start_time" required>
+            <input type="time" name="end_time" required>
+            <input type="number" name="priority" min="1" max="5" value="1">
+            <button type="submit">追加</button>
+        </form>
+        <h2>活動</h2>
+        <ul>
+            {% for activity in activities %}
+                <li>
+                    <div class="activity-name">
+                        {% if activity.name == 'School' %}
+                            <img src="{{ url_for ('static', filename='PNG/school.png')}}" width="24">
+                        {% elif activity.name == 'Work' %}
+                            <img src="{{ url_for ('static', filename='PNG/work.png')}}" width="24">
+                        {% elif activity.name == 'Study' %}
+                            <img src="{{ url_for ('static', filename='PNG/study.png')}}" width="24"> 
+                        {% elif activity.name == 'Gym' %}
+                             <img src="{{ url_for ('static', filename='PNG/gym.png')}}" width="24">    
+                        {% endif %}
+                    
+                    {{activity.day}} - {{activity.name}} ({{activity.start_time}} - {{activity.end_time}})Priority:{{activity.priority}} 
+                </div>
+                    <form action="/delete/{{activity.id}}" method="POST">
+                        <button type="submit" class="delete-btn">削除</button width="5px">
+                    </form>
+                </li>
+            
+                {% endfor %}
+            
+        </ul>
+    </body>
+</html>

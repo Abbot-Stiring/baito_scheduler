@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title> Free Time Battle</title>
+        <link rel="stylesheet" href="{{ url_for('static',filename='style.css')}}">       
+    </head>
+    <body>
+        <div class="container">
+            <h1> 🎮 Free Time Battle</h1>
+            <pre>{{ game_result }}</pre>
+            <a href="{{ url_for('index')}}">
+                <button> Back to Schedule</button>
+            </a>
+        </div>
+    </body>
+</html>
