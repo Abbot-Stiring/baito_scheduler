@@ -56,6 +56,16 @@ def free_time_game():
     game_result = result.stdout
     return render_template("game.html", game_result=game_result)
 
+@app.route("/c_mode_game")
+def c_mode_game():
+    result=subprocess.run(["./battle"],capture_output=True,text=True)
+    game_result=result.stdout
+    return render_template("game.html", game_result=game_result)
+
+@app.route("/mini_maze")
+def mini_maze():
+    return render_template("mini_maze.html")
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()

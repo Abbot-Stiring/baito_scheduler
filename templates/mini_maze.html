@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mini Maze</title>
+        <style>
+            body{
+                display:flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                font-family: Arial, sans-serif;
+                background: linear-gradient(145deg,#FFDEE9,#B5FFFC);
+                margin: 0;
+            }
+
+            #maze{
+                display: grid;
+                margin-bottom: 20px;
+                gap: 2px;
+            }
+            .cell{
+                width: 30px;
+                height: 30px;
+                background-color: white;
+                border:1px solid #333;
+
+            }
+
+            .wall{
+                background-color: #333;
+
+            }
+            .player{
+                background-color: #e91e63;
+            }
+            .goal{
+                background-color: #0f58e0;
+            }
+        </style>
+    </head>
+    <body>
+        
+        <div id="timer">Time: 0</div>
+        <div id="maze"></div>
+
+        <script>
+
+            let level=1;
+            let rows=10;
+            let cols=10;
+            let playerPos={x:1,y:1};
+            let mazeMap=[];
+            let timer;
+            let timeLeft=30;
+
+
+            //const mazeMap=[
+            //[1,1,1,1,1,1,1,1,1,1],
+            //[1,0,0,0,0,0,1,0,0,1],
+            //[1,0,1,1,0,1,1,0,1,1],
+            //[1,0,1,0,0,0,0,0,0,1],
+           // [1,0,1,0,1,1,1,1,0,1],
+           // [1,0,0,0,0,0,0,1,0,1],
+           // [1,1,1,1,1,0,0,1,0,1],
+           // [1,0,0,0,1,0,1,1,0,1],
+           // [1,0,1,0,0,0,0,0,2,1],
+           // [1,1,1,1,1,1,1,1,1,1]
+           // ];
+
+            //const rows =mazeMap.length;
+            //const cols=mazeMap[0].length;
+
+            const mazeDiv=document.getElementById("maze");
+            const timerDiv=document.getElementById("timer");
+            
+
+            function generateMaze(r,c){
+                let maze=Array.from({length:r},()=>Array(c).fill(1));
+                let lastCell={x:1,y:1}
+                function dfs(x,y){
+                    const dirs=[[1,0],[-1,0],[0,1],[0,-1]].sort(()=>Math.random()-0.5);
+                    maze[y][x]=0;
+                    for(const [dx,dy] of dirs){
+                        const nx=x+dx*2;
+                        const ny=y+dy*2;
+                        if(ny>0 && ny<r-1 && nx>0 && nx<c-1 && maze [ny][nx]===1){
+                            maze[y+dy][x+dx]=0;
+                            dfs(nx,ny);
+                        }
+                    }
+                }
+                dfs(1,1);
+                outer:for (let y=r-2; y>=1;y--){
+                    for (let x=c-2;x>=1;x--){
+                        if(maze[y][x]===0){
+                            maze[y][x]=2;
+                            break outer;
+                        }
+                    }
+                    
+                }
+                return maze;
+                //mazeDiv.innerHTML="";
+               // for(let y=0;y<rows;y++){
+                   // for (let x=0;x<cols;x++){
+                        //const cell=document.createElement("div");
+                      //  cell.classList.add("cell");
+                       // if(mazeMap[y][x]===1)cell.classList.add("wall");
+                       // if(playerPos.x===x && playerPos.y===y)cell.classList.add("player");
+                       // if(mazeMap[y][x]===2)cell.classList.add("goal");
+                       // mazeDiv.appendChild(cell);
+                    //}
+               // }
+            }
+            function drawMaze(){
+                mazeDiv.style.gridTemplateColumns=`repeat(${cols},30px)`;
+                mazeDiv.style.gridTemplateRows=`repeat(${rows},30px)`;
+                mazeDiv.innerHTML="";
+                 for(let y=0;y<rows;y++){
+                    for (let x=0;x<cols;x++){
+                        const cell=document.createElement("div");
+                        cell.classList.add("cell");
+                        if(mazeMap[y][x]===1)cell.classList.add("wall");
+                        if(playerPos.x===x && playerPos.y===y)cell.classList.add("player");
+                        if(mazeMap[y][x]===2)cell.classList.add("goal");
+                        mazeDiv.appendChild(cell);
+                    }
+               }
+            }
+
+            function startLevel(){
+                rows=10+level*2;
+                cols=10+level*2;
+                mazeMap=generateMaze(rows,cols);
+                playerPos={x:1,y:1};
+                timeLeft=30+level*5;
+                drawMaze();
+                clearInterval(timer);
+                timerDiv.textContent=`Time: ${timeLeft}`;
+                timer=setInterval(()=>{
+                    timeLeft--;
+                    timerDiv.textContent=`Time: ${timeLeft}`;
+                    if(timeLeft<=0){
+                        clearInterval(timer);
+                        alert("⌛️ Time's up! Play again!");
+                        level=1;
+                        startLevel();
+                    }
+                },1000);
+            }
+                
+            
+
+            document.addEventListener("keydown",(e)=>{
+                let newX=playerPos.x;
+                let newY=playerPos.y;
+                if(e.key==="ArrowUp")newY--;
+                if(e.key==="ArrowDown")newY++;
+                if(e.key==="ArrowLeft")newX--;
+                if(e.key==="ArrowRight")newX++;
+
+                if(mazeMap[newY][newX]!==1){
+                    playerPos={x:newX,y:newY};
+                    drawMaze();
+                    if(mazeMap[newY][newX]==2){
+                        clearInterval(timer);
+                        alert(`🙌 You have cleared the Level ${level}!`);
+                        level++;
+                        startLevel();
+
+
+                    }
+                }
+            });
+
+            startLevel();
+        </script>
+    </body>
+</html>

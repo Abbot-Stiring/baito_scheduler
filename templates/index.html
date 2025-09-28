@@ -49,5 +49,16 @@
                 {% endfor %}
             
         </ul>
+        
+        <h2>Free Time</h2>
+            <form action="{{ url_for('c_mode_game')}}" method="GET">
+                <button type="submit">Random Monster Game</button>
+
+            </form>
+            <form action="{{url_for('mini_maze')}}" method="GET">
+           <button type="submit">Play Mini Maze </button>     
+            </form>
+            
+
     </body>
 </html>
